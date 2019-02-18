@@ -19,7 +19,7 @@
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "cd ../backend && python manage.py runserver"
+    "server": "python manage.py runserver"
   },
   "eslintConfig": {
     "extends": "react-app"
