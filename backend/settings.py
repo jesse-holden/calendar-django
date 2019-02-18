@@ -126,5 +126,5 @@ STATIC_URL = '/static/'
 DATE_INPUT_FORMATS = ['%d-%m-%Y']
 
 CORS_ORIGIN_WHITELIST = (
-    'localhost:3000/'
+    'localhost/'
 )
