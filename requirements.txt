@@ -1,4 +1,5 @@
 Django==2.1.7
 django-cors-headers==2.4.0
 djangorestframework==3.9.1
+gunicorn==19.9.0
 pytz==2018.9
