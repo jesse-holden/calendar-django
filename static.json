@@ -1,0 +1,8 @@
+{
+  "root": "build/",
+  "proxies": {
+    "/route": {
+      "origin": "http://localhost:8000"
+    }
+  }
+}
