@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Calendar from "./components/Calendar/";
 import Modal from "./components/Modal/";
 import axios from "axios";
-import { pad } from "./util/";
+import { pad, timeStringToSeconds } from "./util/";
 
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
@@ -31,7 +31,6 @@ class App extends Component {
   constructor(props) {
     super(props);
     const newDate = new Date().toString().split(" ");
-    // const today = new Date().toISOString().split("T")[0];
     const today = `${newDate[3]}-${pad(
       shortMonthList.indexOf(newDate[1]),
       2
@@ -45,8 +44,9 @@ class App extends Component {
       },
       calendarList: [],
       activeDay: today,
-      activeListItem: null,
-      activeMonth: shortMonthList.indexOf(newDate[1])
+      activeMonth: shortMonthList.indexOf(newDate[1]),
+      activeYear: parseInt(newDate[3]),
+      activeListItem: null
     };
   }
   componentDidMount() {
@@ -55,32 +55,34 @@ class App extends Component {
   refreshList = async () => {
     try {
       const res = await axios.get("/api/calendar/");
-      this.setState({ calendarList: res.data });
+      this.setState({
+        calendarList: res.data.sort(
+          (a, b) => timeStringToSeconds(a.time) - timeStringToSeconds(b.time)
+        )
+      });
     } catch (err) {
       console.log(err);
     }
   };
-  nextMonth = () => {
-    const { activeMonth } = this.state;
-    const nextMonth = activeMonth + 1 < 12 ? activeMonth + 1 : 1;
-    this.setState({
-      activeMonth: nextMonth,
-      activeDay: `2019-${pad(nextMonth, 2)}-01`
-    });
-  };
   prevMonth = () => {
-    const { activeMonth } = this.state;
+    const { activeMonth, activeYear } = this.state;
     const prevMonth = activeMonth - 1 > 0 ? activeMonth - 1 : 12;
+    const newYear = prevMonth === 12 ? activeYear - 1 : activeYear;
     this.setState({
       activeMonth: prevMonth,
-      activeDay: `2019-${pad(prevMonth, 2)}-01`
+      activeDay: `${newYear}-${pad(prevMonth, 2)}-01`,
+      activeYear: newYear
     });
   };
-  displayCompleted = status => {
-    if (status) {
-      return this.setState({ viewCompleted: true });
-    }
-    return this.setState({ viewCompleted: false });
+  nextMonth = () => {
+    const { activeMonth, activeYear } = this.state;
+    const nextMonth = activeMonth + 1 < 13 ? activeMonth + 1 : 1;
+    const newYear = nextMonth === 1 ? activeYear + 1 : activeYear;
+    this.setState({
+      activeMonth: nextMonth,
+      activeDay: `${newYear}-${pad(nextMonth, 2)}-01`,
+      activeYear: newYear
+    });
   };
   toggle = () => {
     this.setState({ modal: !this.state.modal });
@@ -116,16 +118,11 @@ class App extends Component {
   editItem = item => {
     this.setState({ activeItem: item, modal: !this.state.modal });
   };
-  displayCompleted = status => {
-    if (status) {
-      return this.setState({ viewCompleted: true });
-    }
-    return this.setState({ viewCompleted: false });
-  };
   onDayClick = day => {
+    const { activeMonth, activeYear } = this.state;
     const paddedDay = pad(day, 2);
-    const paddedMonth = pad(this.state.activeMonth, 2);
-    this.setState({ activeDay: `2019-${paddedMonth}-${paddedDay}` });
+    const paddedMonth = pad(activeMonth, 2);
+    this.setState({ activeDay: `${activeYear}-${paddedMonth}-${paddedDay}` });
   };
   onlistItemHover = id => {
     this.setState({
@@ -150,30 +147,11 @@ class App extends Component {
       </span>
     );
   };
-  renderTabList = () => {
-    return (
-      <div className="my-5 tab-list">
-        <span
-          onClick={() => this.displayCompleted(true)}
-          className={this.state.viewCompleted ? "active" : ""}
-        >
-          title
-        </span>
-        <span
-          onClick={() => this.displayCompleted(false)}
-          className={this.state.viewCompleted ? "" : "active"}
-        >
-          date
-        </span>
-      </div>
-    );
-  };
   renderItems = () => {
-    const { viewCompleted } = this.state;
-    const newItems = this.state.calendarList.filter(
-      item => item.completed === viewCompleted
+    const { calendarList } = this.state;
+    const events = calendarList.filter(
+      item => item.date === this.state.activeDay
     );
-    const events = newItems.filter(item => item.date === this.state.activeDay);
     return events.length ? (
       events.map(item => (
         <li
@@ -183,12 +161,14 @@ class App extends Component {
           }}
           className="list-group-item d-flex justify-content-between align-items-center"
         >
-          <span
-            className={`todo-title mr-2 p-2 ${
-              this.state.viewCompleted ? "completed-todo" : ""
-            }`}
-            title={item.title}
-          >
+          <span className={"event-title mr-2 p-2 "} title={item.title}>
+            <div className="event-time">
+              {item.time
+                .split(":")
+                .slice(0, 2)
+                .join(":")}
+            </div>
+            {" - "}
             {item.title}
           </span>
           {this.state.activeListItem === item.id
@@ -203,22 +183,22 @@ class App extends Component {
   render() {
     return (
       <main className="content container-fluid">
-        {/* <h1 className="text-white text-uppercase text-center my-2">
+        <h1 className="text-white text-uppercase text-center my-2">
           Calendar app
-        </h1> */}
+        </h1>
         <div className="row pt-2">
           <div className="col-lg-8 col-md-11 col-12 mx-auto p-0 mb-2">
             <div className="card p-3">
               <Calendar
                 activeDay={this.state.activeDay}
                 activeMonth={pad(this.state.activeMonth, 2)}
+                activeYear={this.state.activeYear}
                 onDayClick={this.onDayClick}
                 calendarList={this.state.calendarList}
                 currentMonth={monthList[this.state.activeMonth]}
                 nextMonthButton={this.nextMonth}
                 prevMonthButton={this.prevMonth}
               />
-              {/* {this.renderTabList()} */}
               <ul
                 className="list-group list-group-flush mt-3"
                 onMouseLeave={() => {

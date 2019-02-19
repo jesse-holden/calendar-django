@@ -5,7 +5,8 @@ import "./index.css";
 const WeekDay = props => (
   <div
     className={
-      props.activeDay === `2019-${props.activeMonth}-${pad(props.i, 2)}`
+      props.activeDay ===
+      `${props.activeYear}-${props.activeMonth}-${pad(props.i, 2)}`
         ? "day active"
         : "day"
     }
@@ -49,14 +50,15 @@ export default function Calendar(props) {
           j++;
         }
         const eventsToday =
-          eventCount[`2019-${props.activeMonth}-${pad(i, 2)}`];
+          eventCount[`${props.activeYear}-${props.activeMonth}-${pad(i, 2)}`];
         week.push(
           <WeekDay
             key={i}
             i={i}
             eventsToday={eventsToday}
-            activeMonth={props.activeMonth}
             activeDay={props.activeDay}
+            activeMonth={props.activeMonth}
+            activeYear={props.activeYear}
             onDayClick={props.onDayClick}
           />
         );
@@ -88,7 +90,9 @@ export default function Calendar(props) {
           className="fas p-2 m-2 arrow-button fa-angle-double-left"
           onClick={props.prevMonthButton}
         />
-        <h2>{props.currentMonth} 2019</h2>
+        <h2>
+          {props.currentMonth} {props.activeYear}
+        </h2>
         <i
           className="fas p-2 m-2 arrow-button fa-angle-double-right"
           onClick={props.nextMonthButton}
