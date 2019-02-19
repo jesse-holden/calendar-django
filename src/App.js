@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Calendar from "./components/Calendar/";
 import Modal from "./components/Modal/";
 import axios from "axios";
-import { pad } from "./helpers";
+import { pad } from "./util/";
 
 class App extends Component {
   constructor(props) {

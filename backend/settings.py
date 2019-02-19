@@ -25,7 +25,7 @@ SECRET_KEY = '9wfjir%6$2wca1vy%ztfpofsq^vii3mmf5kds_+yt9_l17)9ax'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['safe-wildwood-10272.herokuapp.com', 'localhost']
+ALLOWED_HOSTS = ['safe-wildwood-10272.herokuapp.com', 'localhost', 'calendar-django-app.herokuapp.com']
 
 
 # Application definition
