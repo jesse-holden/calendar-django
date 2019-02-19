@@ -4,6 +4,9 @@ import Modal from "./components/Modal/";
 import axios from "axios";
 import { pad } from "./util/";
 
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+axios.defaults.xsrfCookieName = "csrftoken";
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -82,7 +85,7 @@ class App extends Component {
     }
   };
   handleDelete = async item => {
-    await axios.delete(`/api/calendar/${item.id}`);
+    await axios.delete(`/api/calendar/${item.id}/`);
     this.refreshList();
   };
   createItem = () => {
