@@ -12,6 +12,7 @@
     "react-scripts": "2.1.5",
     "reactstrap": "^7.1.0"
   },
+  "proxy": "http://localhost:8000",
   "scripts": {
     "client": "react-scripts start",
     "build": "react-scripts build",
@@ -28,5 +29,9 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "engines": {
+    "node": "11.10.0",
+    "npm": "6.7.0"
+  }
 }

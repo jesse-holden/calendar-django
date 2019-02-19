@@ -1,8 +1,0 @@
-{
-  "root": "build/",
-  "proxies": {
-    "/api/": {
-      "origin": "http://localhost:8000/api"
-    }
-  }
-}

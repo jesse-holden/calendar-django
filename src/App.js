@@ -1,12 +1,13 @@
 import React, { Component } from "react";
-import Calendar from "./components/Calendar";
-import Modal from "./components/Modal";
+import Calendar from "./components/Calendar/";
+import Modal from "./components/Modal/";
 import axios from "axios";
 import { pad } from "./helpers";
 
 class App extends Component {
   constructor(props) {
     super(props);
+    const today = new Date().toISOString().split("T")[0];
     this.state = {
       modal: false,
       activeItem: {
@@ -15,8 +16,23 @@ class App extends Component {
         time: ""
       },
       calendarList: [],
-      activeDay: "2019-02-17",
-      activeListItem: null
+      activeDay: today,
+      activeListItem: null,
+      monthList: [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ],
+      activeMonth: 1
     };
   }
   componentDidMount() {
@@ -29,6 +45,18 @@ class App extends Component {
     } catch (err) {
       console.log(err);
     }
+  };
+  nextMonth = () => {
+    const newCurrent = this.state.activeMonth + 1;
+    this.setState({
+      activeMonth: newCurrent <= 11 ? newCurrent : 0
+    });
+  };
+  prevMonth = () => {
+    const newCurrent = this.state.activeMonth - 1;
+    this.setState({
+      activeMonth: newCurrent >= 0 ? newCurrent : 11
+    });
   };
   displayCompleted = status => {
     if (status) {
@@ -78,7 +106,8 @@ class App extends Component {
   };
   onDayClick = day => {
     const paddedDay = pad(day, 2);
-    this.setState({ activeDay: `2019-02-${paddedDay}` });
+    const paddedMonth = pad(this.state.activeMonth + 1, 2);
+    this.setState({ activeDay: `2019-${paddedMonth}-${paddedDay}` });
   };
   onlistItemHover = id => {
     this.setState({
@@ -164,8 +193,12 @@ class App extends Component {
             <div className="card p-3">
               <Calendar
                 activeDay={this.state.activeDay}
+                activeMonth={pad(this.state.activeMonth + 1, 2)}
                 onDayClick={this.onDayClick}
                 calendarList={this.state.calendarList}
+                currentMonth={this.state.monthList[this.state.activeMonth]}
+                nextMonthButton={this.nextMonth}
+                prevMonthButton={this.prevMonth}
               />
               {/* {this.renderTabList()} */}
               <ul

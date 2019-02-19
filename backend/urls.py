@@ -7,5 +7,5 @@ router = routers.DefaultRouter()
 router.register(r'calendar', views.CalendarItemView, 'calendarapp')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),         path('api/', include(router.urls))
+    path('', views.index ),path('admin/', admin.site.urls),         path('api/', include(router.urls))
 ]

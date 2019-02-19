@@ -1,26 +1,26 @@
 import React from "react";
-import { pad } from "../helpers";
-import "./Calendar.css";
+import { pad } from "../../util";
+import "./index.css";
+
+const WeekDay = props => (
+  <div
+    className={
+      props.activeDay === `2019-${props.activeMonth}-${pad(props.i, 2)}`
+        ? "day active"
+        : "day"
+    }
+    onClick={() => {
+      props.onDayClick(props.i);
+    }}
+  >
+    <span className="day-label">{props.i}</span>
+    {props.eventsToday ? (
+      <span className="event-count-label">{props.eventsToday}</span>
+    ) : null}
+  </div>
+);
 
 export default function Calendar(props) {
-  const renderWeekDay = (i, eventsToday) => {
-    return (
-      <div
-        key={i}
-        className={
-          props.activeDay === `2019-02-${pad(i, 2)}` ? "day active" : "day"
-        }
-        onClick={() => {
-          props.onDayClick(i);
-        }}
-      >
-        <span className="day-label">{i}</span>
-        {eventsToday ? (
-          <span className="event-count-label">{eventsToday}</span>
-        ) : null}
-      </div>
-    );
-  };
   const renderCalendarDays = () => {
     const days = 28;
     let blankDays = 5;
@@ -48,8 +48,18 @@ export default function Calendar(props) {
           blankDays--;
           j++;
         }
-        const eventsToday = eventCount[`2019-02-${pad(i, 2)}`];
-        week.push(renderWeekDay(i, eventsToday));
+        const eventsToday =
+          eventCount[`2019-${props.activeMonth}-${pad(i, 2)}`];
+        week.push(
+          <WeekDay
+            key={i}
+            i={i}
+            eventsToday={eventsToday}
+            activeMonth={props.activeMonth}
+            activeDay={props.activeDay}
+            onDayClick={props.onDayClick}
+          />
+        );
         i++;
         j++;
 
@@ -74,9 +84,15 @@ export default function Calendar(props) {
   return (
     <React.Fragment>
       <div className="row justify-content-center align-items-center">
-        <i className="fas p-2 m-2 arrow-button fa-angle-double-left" />
-        <h2>February 2019</h2>
-        <i className="fas p-2 m-2 arrow-button fa-angle-double-right" />
+        <i
+          className="fas p-2 m-2 arrow-button fa-angle-double-left"
+          onClick={props.prevMonthButton}
+        />
+        <h2>{props.currentMonth} 2019</h2>
+        <i
+          className="fas p-2 m-2 arrow-button fa-angle-double-right"
+          onClick={props.nextMonthButton}
+        />
       </div>
       <div className="row text-center">
         <div className="month">
