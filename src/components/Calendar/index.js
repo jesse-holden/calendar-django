@@ -2,6 +2,8 @@ import React from "react";
 import { pad } from "../../util";
 import "./index.css";
 
+const shortDaysOfWeek = [null, "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
 const WeekDay = props => (
   <div
     className={
@@ -23,8 +25,13 @@ const WeekDay = props => (
 
 export default function Calendar(props) {
   const renderCalendarDays = () => {
-    const days = 28;
-    let blankDays = 5;
+    let numDaysCurMonth = new Date(props.activeYear, props.activeMonth, 0);
+    let numSpaceDays = new Date(props.activeYear, props.activeMonth - 1, 0);
+    let days = numDaysCurMonth.getDate();
+    let blankDays = shortDaysOfWeek.indexOf(
+      numSpaceDays.toString().split(" ")[0]
+    );
+    blankDays = blankDays > 6 ? 0 : blankDays;
     const month = [];
     const eventCount = {};
     props.calendarList.map(
