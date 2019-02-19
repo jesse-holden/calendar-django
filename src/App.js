@@ -7,10 +7,35 @@ import { pad } from "./util/";
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
+const monthList = [
+  null,
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
+];
+let shortMonthList = [];
+monthList.map(month =>
+  shortMonthList.push(month ? month.substring(0, 3) : null)
+);
+
 class App extends Component {
   constructor(props) {
     super(props);
-    const today = new Date().toISOString().split("T")[0];
+    const newDate = new Date().toString().split(" ");
+    // const today = new Date().toISOString().split("T")[0];
+    const today = `${newDate[3]}-${pad(
+      shortMonthList.indexOf(newDate[1]),
+      2
+    )}-${newDate[2]}`;
     this.state = {
       modal: false,
       activeItem: {
@@ -21,21 +46,7 @@ class App extends Component {
       calendarList: [],
       activeDay: today,
       activeListItem: null,
-      monthList: [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-      ],
-      activeMonth: 1
+      activeMonth: shortMonthList.indexOf(newDate[1])
     };
   }
   componentDidMount() {
@@ -50,15 +61,19 @@ class App extends Component {
     }
   };
   nextMonth = () => {
-    const newCurrent = this.state.activeMonth + 1;
+    const { activeMonth } = this.state;
+    const nextMonth = activeMonth + 1 < 12 ? activeMonth + 1 : 1;
     this.setState({
-      activeMonth: newCurrent <= 11 ? newCurrent : 0
+      activeMonth: nextMonth,
+      activeDay: `2019-${pad(nextMonth, 2)}-01`
     });
   };
   prevMonth = () => {
-    const newCurrent = this.state.activeMonth - 1;
+    const { activeMonth } = this.state;
+    const prevMonth = activeMonth - 1 > 0 ? activeMonth - 1 : 12;
     this.setState({
-      activeMonth: newCurrent >= 0 ? newCurrent : 11
+      activeMonth: prevMonth,
+      activeDay: `2019-${pad(prevMonth, 2)}-01`
     });
   };
   displayCompleted = status => {
@@ -109,7 +124,7 @@ class App extends Component {
   };
   onDayClick = day => {
     const paddedDay = pad(day, 2);
-    const paddedMonth = pad(this.state.activeMonth + 1, 2);
+    const paddedMonth = pad(this.state.activeMonth, 2);
     this.setState({ activeDay: `2019-${paddedMonth}-${paddedDay}` });
   };
   onlistItemHover = id => {
@@ -196,10 +211,10 @@ class App extends Component {
             <div className="card p-3">
               <Calendar
                 activeDay={this.state.activeDay}
-                activeMonth={pad(this.state.activeMonth + 1, 2)}
+                activeMonth={pad(this.state.activeMonth, 2)}
                 onDayClick={this.onDayClick}
                 calendarList={this.state.calendarList}
-                currentMonth={this.state.monthList[this.state.activeMonth]}
+                currentMonth={monthList[this.state.activeMonth]}
                 nextMonthButton={this.nextMonth}
                 prevMonthButton={this.prevMonth}
               />
