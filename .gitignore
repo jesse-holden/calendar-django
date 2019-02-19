@@ -26,5 +26,5 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-/.vscode
-db.sqlite3
+.vscode/*
+.sqlite3
