@@ -17,7 +17,7 @@
     "start": "npm run build && python manage.py migrate && python manage.py runserver",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "python manage.py runserver 8000",
+    "server": "python manage.py runserver",
     "postinstall": "npm run build"
   },
   "eslintConfig": {
