@@ -25,7 +25,7 @@ SECRET_KEY = '9wfjir%6$2wca1vy%ztfpofsq^vii3mmf5kds_+yt9_l17)9ax'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['safe-wildwood-10272.herokuapp.com', 'localhost', 'calendar-django-app.herokuapp.com']
+ALLOWED_HOSTS = ['localhost', 'calendar-django-app.herokuapp.com']
 
 
 # Application definition
@@ -128,8 +128,6 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-
-DATE_INPUT_FORMATS = ['%d-%m-%Y']
 
 CORS_ORIGIN_WHITELIST = (
     'localhost/'
