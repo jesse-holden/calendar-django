@@ -2,9 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
-import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import dotenv from "dotenv";
+import App from "./components/App";
 dotenv.config();
 
 ReactDOM.render(<App />, document.getElementById("root"));

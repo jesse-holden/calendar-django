@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import Calendar from "./components/Calendar/";
-import Modal from "./components/Modal/";
+import Calendar from "./Calendar";
+import Modal from "./Modal";
 import axios from "axios";
-import { pad, timeStringToSeconds, monthList } from "./util/";
-import Events from "./components/Events";
+import { pad, timeStringToSeconds, monthList } from "../util";
+import Events from "./Events";
 
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";

@@ -16,21 +16,3 @@ h5,
 h6 {
   margin-bottom: 0.3rem;
 }
-.event-title {
-  cursor: pointer;
-}
-.event-time {
-  display: inline-block;
-  font-weight: 600;
-}
-.tab-list > span {
-  padding: 5px 8px;
-  border: 1px solid #282c34;
-  border-radius: 10px;
-  margin-right: 5px;
-  cursor: pointer;
-}
-.tab-list > span.active {
-  background-color: #282c34;
-  color: #ffffff;
-}

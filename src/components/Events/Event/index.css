@@ -1,0 +1,23 @@
+.event {
+  background-color: #ccc;
+}
+
+.event-count-label {
+  background-color: #aaa;
+  border-radius: 50%;
+  color: #fff;
+  display: inline-block;
+  font-size: 0.8rem;
+  height: 1.2rem;
+  width: 1.2rem;
+  pointer-events: none;
+}
+
+.event-title {
+  cursor: pointer;
+}
+
+.event-time {
+  display: inline-block;
+  font-weight: 600;
+}
