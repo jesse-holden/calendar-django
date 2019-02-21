@@ -2,39 +2,15 @@ import React, { Component } from "react";
 import Calendar from "./components/Calendar/";
 import Modal from "./components/Modal/";
 import axios from "axios";
-import { pad, timeStringToSeconds } from "./util/";
+import { pad, timeStringToSeconds, monthList } from "./util/";
+import Events from "./components/Events";
 
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
-const monthList = [
-  null,
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December"
-];
-let shortMonthList = [];
-monthList.map(month =>
-  shortMonthList.push(month ? month.substring(0, 3) : null)
-);
-
 class App extends Component {
   constructor(props) {
     super(props);
-    const newDate = new Date().toString().split(" ");
-    const today = `${newDate[3]}-${pad(
-      shortMonthList.indexOf(newDate[1]),
-      2
-    )}-${newDate[2]}`;
     this.state = {
       modal: false,
       activeItem: {
@@ -43,15 +19,28 @@ class App extends Component {
         time: ""
       },
       calendarList: [],
-      activeDay: today,
-      activeMonth: shortMonthList.indexOf(newDate[1]),
-      activeYear: parseInt(newDate[3]),
+      activeDay: null,
+      activeMonth: null,
+      activeYear: null,
       activeListItem: null
     };
   }
+
   componentDidMount() {
+    const newDate = new Date().toString().split(" ");
+    const today = `${newDate[3]}-${pad(
+      monthList.short.indexOf(newDate[1]),
+      2
+    )}-${newDate[2]}`;
+    this.setState({
+      activeDay: today,
+      activeMonth: monthList.short.indexOf(newDate[1]),
+      activeYear: parseInt(newDate[3])
+    });
     this.refreshList();
   }
+
+  // Update list of all events from API
   refreshList = async () => {
     try {
       const res = await axios.get("/api/calendar/");
@@ -64,31 +53,62 @@ class App extends Component {
       console.log(err);
     }
   };
-  prevMonth = () => {
+
+  // User presses "next" or "prev" month buttons
+  changeMonth = interval => {
     const { activeMonth, activeYear } = this.state;
-    const prevMonth = activeMonth - 1 > 0 ? activeMonth - 1 : 12;
-    const newYear = prevMonth === 12 ? activeYear - 1 : activeYear;
+    let newMonth = activeMonth + interval;
+    let newYear = activeYear;
+    while (newMonth > 12) {
+      newMonth -= 12;
+      newYear++;
+    }
+    while (newMonth < 1) {
+      newMonth += 12;
+      newYear--;
+    }
     this.setState({
-      activeMonth: prevMonth,
-      activeDay: `${newYear}-${pad(prevMonth, 2)}-01`,
+      activeMonth: newMonth,
+      activeDay: `${newYear}-${pad(newMonth, 2)}-01`,
       activeYear: newYear
     });
   };
-  nextMonth = () => {
-    const { activeMonth, activeYear } = this.state;
-    const nextMonth = activeMonth + 1 < 13 ? activeMonth + 1 : 1;
-    const newYear = nextMonth === 1 ? activeYear + 1 : activeYear;
-    this.setState({
-      activeMonth: nextMonth,
-      activeDay: `${newYear}-${pad(nextMonth, 2)}-01`,
-      activeYear: newYear
-    });
-  };
-  toggle = () => {
+
+  // User opens or closes the modal window
+  toggleModal = () => {
     this.setState({ modal: !this.state.modal });
   };
+
+  // User clicks a day "cell" on the calendar
+  handleDayClick = day => {
+    const { activeMonth, activeYear } = this.state;
+    const paddedDay = pad(day, 2);
+    const paddedMonth = pad(activeMonth, 2);
+    this.setState({ activeDay: `${activeYear}-${paddedMonth}-${paddedDay}` });
+  };
+
+  // User moves cursor over an event in the event list
+  onlistItemHover = id => {
+    this.setState({
+      activeListItem: id
+    });
+  };
+
+  // User clicks "add event" button
+  createItem = () => {
+    const { activeDay } = this.state;
+    const item = {
+      title: "",
+      date: activeDay ? activeDay : "2019-01-01",
+      time: "12:00:00"
+    };
+
+    this.setState({ activeItem: item, modal: !this.state.modal });
+  };
+
+  // User creates a new event
   handleSubmit = async item => {
-    this.toggle();
+    this.toggleModal();
     try {
       if (item.id) {
         await axios.put(`/api/calendar/${item.id}/`, item);
@@ -101,85 +121,18 @@ class App extends Component {
       console.log(err);
     }
   };
+
+  // User deletes an event
   handleDelete = async item => {
     await axios.delete(`/api/calendar/${item.id}/`);
     this.refreshList();
   };
-  createItem = () => {
-    const { activeDay } = this.state;
-    const item = {
-      title: "",
-      date: activeDay ? activeDay : "2019-02-17",
-      time: "12:00:00"
-    };
 
-    this.setState({ activeItem: item, modal: !this.state.modal });
-  };
+  // User edits an existing event
   editItem = item => {
     this.setState({ activeItem: item, modal: !this.state.modal });
   };
-  onDayClick = day => {
-    const { activeMonth, activeYear } = this.state;
-    const paddedDay = pad(day, 2);
-    const paddedMonth = pad(activeMonth, 2);
-    this.setState({ activeDay: `${activeYear}-${paddedMonth}-${paddedDay}` });
-  };
-  onlistItemHover = id => {
-    this.setState({
-      activeListItem: id
-    });
-  };
-  renderItemButtons = item => {
-    return (
-      <span>
-        <button
-          onClick={() => this.editItem(item)}
-          className="btn btn-secondary mr-2"
-        >
-          Edit
-        </button>
-        <button
-          onClick={() => this.handleDelete(item)}
-          className="btn btn-danger"
-        >
-          Delete
-        </button>
-      </span>
-    );
-  };
-  renderItems = () => {
-    const { calendarList } = this.state;
-    const events = calendarList.filter(
-      item => item.date === this.state.activeDay
-    );
-    return events.length ? (
-      events.map(item => (
-        <li
-          key={item.id}
-          onMouseMove={() => {
-            this.onlistItemHover(item.id);
-          }}
-          className="list-group-item d-flex justify-content-between align-items-center"
-        >
-          <span className={"event-title mr-2 p-2 "} title={item.title}>
-            <div className="event-time">
-              {item.time
-                .split(":")
-                .slice(0, 2)
-                .join(":")}
-            </div>
-            {" - "}
-            {item.title}
-          </span>
-          {this.state.activeListItem === item.id
-            ? this.renderItemButtons(item)
-            : null}
-        </li>
-      ))
-    ) : (
-      <span className="text-center">No events</span>
-    );
-  };
+
   render() {
     return (
       <main className="content container-fluid">
@@ -193,11 +146,10 @@ class App extends Component {
                 activeDay={this.state.activeDay}
                 activeMonth={pad(this.state.activeMonth, 2)}
                 activeYear={this.state.activeYear}
-                onDayClick={this.onDayClick}
                 calendarList={this.state.calendarList}
-                currentMonth={monthList[this.state.activeMonth]}
-                nextMonthButton={this.nextMonth}
-                prevMonthButton={this.prevMonth}
+                changeMonth={this.changeMonth}
+                currentMonth={monthList.long[this.state.activeMonth]}
+                handleDayClick={this.handleDayClick}
               />
               <ul
                 className="list-group list-group-flush mt-3"
@@ -206,7 +158,14 @@ class App extends Component {
                 }}
               >
                 <hr />
-                {this.renderItems()}
+                <Events
+                  activeDay={this.state.activeDay}
+                  activeListItem={this.state.activeListItem}
+                  calendarList={this.state.calendarList}
+                  editItem={this.editItem}
+                  handleDelete={this.handleDelete}
+                  onlistItemHover={this.onlistItemHover}
+                />
               </ul>
 
               <div className="ml-auto py-3">
@@ -220,8 +179,8 @@ class App extends Component {
         {this.state.modal ? (
           <Modal
             activeItem={this.state.activeItem}
-            toggle={this.toggle}
             onSave={this.handleSubmit}
+            toggleModal={this.toggleModal}
           />
         ) : null}
       </main>

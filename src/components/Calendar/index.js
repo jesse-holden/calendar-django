@@ -1,35 +1,15 @@
 import React from "react";
-import { pad } from "../../util";
+import { pad, shortDaysOfWeek } from "../../util";
+import WeekDay from "./WeekDay";
 import "./index.css";
-
-const shortDaysOfWeek = [null, "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-const WeekDay = props => (
-  <div
-    className={
-      props.activeDay ===
-      `${props.activeYear}-${props.activeMonth}-${pad(props.i, 2)}`
-        ? "day active"
-        : "day"
-    }
-    onClick={() => {
-      props.onDayClick(props.i);
-    }}
-  >
-    <span className="day-label">{props.i}</span>
-    {props.eventsToday ? (
-      <span className="event-count-label">{props.eventsToday}</span>
-    ) : null}
-  </div>
-);
 
 export default function Calendar(props) {
   const renderCalendarDays = () => {
-    let numDaysCurMonth = new Date(props.activeYear, props.activeMonth, 0);
-    let numSpaceDays = new Date(props.activeYear, props.activeMonth - 1, 0);
-    let days = numDaysCurMonth.getDate();
+    const daysCurrentMonth = new Date(props.activeYear, props.activeMonth, 0);
+    const blankSpaces = new Date(props.activeYear, props.activeMonth - 1, 0);
+    const days = daysCurrentMonth.getDate();
     let blankDays = shortDaysOfWeek.indexOf(
-      numSpaceDays.toString().split(" ")[0]
+      blankSpaces.toString().split(" ")[0]
     );
     blankDays = blankDays > 6 ? 0 : blankDays;
     const month = [];
@@ -43,7 +23,7 @@ export default function Calendar(props) {
     let i = 1;
 
     while (i <= days) {
-      let week = [];
+      const week = [];
       let j = 0;
       while (i <= days) {
         if (j > 6) break;
@@ -66,7 +46,7 @@ export default function Calendar(props) {
             activeDay={props.activeDay}
             activeMonth={props.activeMonth}
             activeYear={props.activeYear}
-            onDayClick={props.onDayClick}
+            handleDayClick={props.handleDayClick}
           />
         );
         i++;
@@ -95,14 +75,18 @@ export default function Calendar(props) {
       <div className="row justify-content-center align-items-center">
         <i
           className="fas p-2 m-2 arrow-button fa-angle-double-left"
-          onClick={props.prevMonthButton}
+          onClick={() => {
+            props.changeMonth(-1);
+          }}
         />
         <h2>
           {props.currentMonth} {props.activeYear}
         </h2>
         <i
           className="fas p-2 m-2 arrow-button fa-angle-double-right"
-          onClick={props.nextMonthButton}
+          onClick={() => {
+            props.changeMonth(1);
+          }}
         />
       </div>
       <div className="row text-center">

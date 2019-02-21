@@ -11,6 +11,7 @@ import {
   Label
 } from "reactstrap";
 
+// This component is the modal for creating and editing events
 export class CustomModal extends Component {
   constructor(props) {
     super(props);
@@ -24,10 +25,10 @@ export class CustomModal extends Component {
     this.setState({ activeItem });
   };
   render() {
-    const { toggle, onSave } = this.props;
+    const { toggleModal, onSave } = this.props;
     return (
-      <Modal isOpen={true} toggle={toggle}>
-        <ModalHeader toggle={toggle}> Event Item </ModalHeader>
+      <Modal isOpen={true} toggle={toggleModal}>
+        <ModalHeader toggle={toggleModal}> Event Item </ModalHeader>
         <ModalBody>
           <Form>
             <FormGroup>
