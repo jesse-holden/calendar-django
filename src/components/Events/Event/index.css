@@ -1,3 +1,7 @@
+.btn-delete {
+  z-index: 2;
+}
+
 .event {
   background-color: #ccc;
 }
@@ -13,8 +17,12 @@
   pointer-events: none;
 }
 
-.event-title {
+.list-group-item {
   cursor: pointer;
+}
+
+.list-group-item:hover {
+  background-color: #eee;
 }
 
 .event-time {

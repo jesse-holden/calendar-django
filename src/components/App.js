@@ -55,7 +55,7 @@ class App extends Component {
   };
 
   // User presses "next" or "prev" month buttons
-  changeMonth = interval => {
+  handleChangeMonth = interval => {
     const { activeMonth, activeYear } = this.state;
     let newMonth = activeMonth + interval;
     let newYear = activeYear;
@@ -147,7 +147,7 @@ class App extends Component {
                 activeMonth={pad(this.state.activeMonth, 2)}
                 activeYear={this.state.activeYear}
                 calendarList={this.state.calendarList}
-                changeMonth={this.changeMonth}
+                handleChangeMonth={this.handleChangeMonth}
                 currentMonth={monthList.long[this.state.activeMonth]}
                 handleDayClick={this.handleDayClick}
               />

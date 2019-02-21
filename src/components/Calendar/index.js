@@ -76,7 +76,7 @@ export default function Calendar(props) {
         <i
           className="fas p-2 m-2 arrow-button fa-angle-double-left"
           onClick={() => {
-            props.changeMonth(-1);
+            props.handleChangeMonth(-1);
           }}
         />
         <h2>
@@ -85,7 +85,7 @@ export default function Calendar(props) {
         <i
           className="fas p-2 m-2 arrow-button fa-angle-double-right"
           onClick={() => {
-            props.changeMonth(1);
+            props.handleChangeMonth(1);
           }}
         />
       </div>

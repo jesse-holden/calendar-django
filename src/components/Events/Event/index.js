@@ -8,22 +8,18 @@ export default function Event({
   editItem,
   handleDelete
 }) {
-  const renderItemButtons = item => (
-    <span>
-      <button onClick={() => editItem(item)} className="btn btn-secondary mr-2">
-        Edit
-      </button>
-      <button onClick={() => handleDelete(item)} className="btn btn-danger">
-        Delete
-      </button>
-    </span>
-  );
+  function handleDeleteMiddle(event, item) {
+    // Stop event delete from opening "edit" modal
+    event.stopPropagation();
+    handleDelete(item);
+  }
 
   return (
     <li
       onMouseMove={() => {
         onlistItemHover(item.id);
       }}
+      onClick={() => editItem(item)}
       className="list-group-item d-flex justify-content-between align-items-center"
     >
       <span className={"event-title mr-2 p-2 "} title={item.title}>
@@ -36,7 +32,16 @@ export default function Event({
         {" - "}
         {item.title}
       </span>
-      {activeListItem === item.id ? renderItemButtons(item) : null}
+      {activeListItem === item.id ? (
+        <span>
+          <button
+            onClick={event => handleDeleteMiddle(event, item)}
+            className="btn btn-danger btn-delete"
+          >
+            Delete
+          </button>
+        </span>
+      ) : null}
     </li>
   );
 }
