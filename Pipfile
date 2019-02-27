@@ -4,6 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+autopep8 = "*"
 
 [packages]
 django-cors-headers = "==2.4.0"
@@ -12,6 +13,8 @@ gunicorn = "==19.9.0"
 pytz = "==2018.9"
 whitenoise = "==4.1.2"
 Django = "==2.1.7"
+dj-database-url = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.7"
