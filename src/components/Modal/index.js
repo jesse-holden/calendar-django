@@ -7,6 +7,7 @@ import {
   ModalFooter,
   Form,
   FormGroup,
+  FormFeedback,
   Input,
   Label
 } from "reactstrap";
@@ -24,23 +25,31 @@ export class CustomModal extends Component {
     const activeItem = { ...this.state.activeItem, [name]: value };
     this.setState({ activeItem });
   };
+  handleSubmit = event => {
+    if (event) event.preventDefault();
+    this.props.handleSubmit(this.state.activeItem);
+  };
   render() {
-    const { toggleModal, onSave } = this.props;
+    const { activeItem } = this.state;
+    const { toggleModal } = this.props;
+    const { handleChange, handleSubmit } = this;
     return (
       <Modal isOpen={true} toggle={toggleModal}>
         <ModalHeader toggle={toggleModal}> Event Item </ModalHeader>
-        <ModalBody>
-          <Form>
+        <Form onSubmit={handleSubmit}>
+          <ModalBody>
             <FormGroup>
               <Label for="title">Title</Label>
               <Input
                 type="text"
                 name="title"
                 id="title"
-                value={this.state.activeItem.title}
-                onChange={this.handleChange}
+                value={activeItem.title}
+                onChange={handleChange}
                 placeholder="Enter Event Title"
+                required
               />
+              <FormFeedback>This title is invalid!</FormFeedback>
             </FormGroup>
             <FormGroup>
               <Label for="date">Date</Label>
@@ -48,8 +57,8 @@ export class CustomModal extends Component {
                 type="date"
                 name="date"
                 id="date"
-                value={this.state.activeItem.date}
-                onChange={this.handleChange}
+                value={activeItem.date}
+                onChange={handleChange}
                 placeholder="Enter Event Date"
               />
             </FormGroup>
@@ -59,18 +68,18 @@ export class CustomModal extends Component {
                 type="time"
                 name="time"
                 id="time"
-                value={this.state.activeItem.time}
-                onChange={this.handleChange}
+                value={activeItem.time}
+                onChange={handleChange}
                 placeholder="Enter Event Time"
               />
             </FormGroup>
-          </Form>
-        </ModalBody>
-        <ModalFooter>
-          <Button color="success" onClick={() => onSave(this.state.activeItem)}>
-            Save
-          </Button>
-        </ModalFooter>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="success" type="Submit">
+              Save
+            </Button>
+          </ModalFooter>
+        </Form>
       </Modal>
     );
   }
