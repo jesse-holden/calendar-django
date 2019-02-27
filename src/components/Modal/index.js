@@ -50,7 +50,6 @@ export function CustomModal(props) {
               placeholder="Enter Event Title"
               required
             />
-            <FormFeedback>You need to enter a title</FormFeedback>
           </FormGroup>
           <FormGroup>
             <Label for="date">Date</Label>
@@ -61,6 +60,7 @@ export function CustomModal(props) {
               value={values.date}
               onChange={handleChange}
               placeholder="Enter Event Date"
+              required
             />
           </FormGroup>
           <FormGroup>
@@ -72,6 +72,7 @@ export function CustomModal(props) {
               value={values.time}
               onChange={handleChange}
               placeholder="Enter Event Time"
+              required
             />
           </FormGroup>
         </ModalBody>
