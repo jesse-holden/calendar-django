@@ -1,19 +1,7 @@
 import React from "react";
 import "./index.css";
 
-export default function Event({
-  item,
-  activeListItem,
-  onlistItemHover,
-  editItem,
-  handleDelete
-}) {
-  function handleDeleteMiddle(event, item) {
-    // Stop event delete from opening "edit" modal
-    event.stopPropagation();
-    handleDelete(item);
-  }
-
+export default function Event({ item, onlistItemHover, editItem }) {
   return (
     <li
       onMouseMove={() => {
@@ -32,16 +20,6 @@ export default function Event({
         {" - "}
         {item.title}
       </span>
-      {activeListItem === item.id ? (
-        <span>
-          <button
-            onClick={event => handleDeleteMiddle(event, item)}
-            className="btn btn-danger btn-delete"
-          >
-            Delete
-          </button>
-        </span>
-      ) : null}
     </li>
   );
 }
