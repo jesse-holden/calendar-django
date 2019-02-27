@@ -14,9 +14,10 @@ class App extends Component {
     this.state = {
       modal: false,
       activeItem: {
-        title: "",
-        date: "",
-        time: ""
+        id: null,
+        title: null,
+        date: null,
+        time: null
       },
       calendarList: [],
       activeDay: null,
@@ -96,14 +97,14 @@ class App extends Component {
 
   // User clicks "add event" button
   createItem = () => {
-    const { activeDay } = this.state;
+    const { activeDay, modal } = this.state;
     const item = {
       title: "",
       date: activeDay ? activeDay : "2019-01-01",
       time: "12:00:00"
     };
 
-    this.setState({ activeItem: item, modal: !this.state.modal });
+    this.setState({ activeItem: item, modal: !modal });
   };
 
   // User creates a new event
@@ -124,12 +125,14 @@ class App extends Component {
 
   // User deletes an event
   handleDelete = async item => {
+    this.toggleModal();
     await axios.delete(`/api/calendar/${item.id}/`);
     this.refreshList();
   };
 
   // User edits an existing event
   editItem = item => {
+    this.toggleModal();
     this.setState({ activeItem: item, modal: !this.state.modal });
   };
 
@@ -147,8 +150,8 @@ class App extends Component {
                 activeMonth={pad(this.state.activeMonth, 2)}
                 activeYear={this.state.activeYear}
                 calendarList={this.state.calendarList}
-                handleChangeMonth={this.handleChangeMonth}
                 currentMonth={monthList.long[this.state.activeMonth]}
+                handleChangeMonth={this.handleChangeMonth}
                 handleDayClick={this.handleDayClick}
               />
               <ul
@@ -163,7 +166,6 @@ class App extends Component {
                   activeListItem={this.state.activeListItem}
                   calendarList={this.state.calendarList}
                   editItem={this.editItem}
-                  handleDelete={this.handleDelete}
                   onlistItemHover={this.onlistItemHover}
                 />
               </ul>
@@ -178,8 +180,10 @@ class App extends Component {
         </div>
         {this.state.modal ? (
           <Modal
+            activeDay={this.state.activeDay}
             activeItem={this.state.activeItem}
             handleSubmit={this.handleSubmit}
+            handleDelete={this.handleDelete}
             toggleModal={this.toggleModal}
           />
         ) : null}
