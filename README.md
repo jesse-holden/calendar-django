@@ -1,5 +1,7 @@
 # App is live on [heroku](https://calendar-django-app.herokuapp.com/)
 
+This is a demonstration of how you could build an event calendar from scratch using React and Python together
+
 ## Available Scripts
 
 In the project directory, you can run:
